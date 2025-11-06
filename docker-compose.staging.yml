@@ -10,7 +10,7 @@ services:
       - db-volume:/var/lib/postgresql/data
 
   api:
-    image: leokuntz/pratica4ac2
+    image: leokuntz/pratica4ac2:latest
     networks:
       - default
     environment:

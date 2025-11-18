@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(AvaliacaoController.class)
 class AvaliacaoControllerTest {
@@ -25,22 +25,26 @@ class AvaliacaoControllerTest {
     private AvaliacaoService avaliacaoService;
 
     @Test
-    void deveChamarServiceENotificarCreatedAoRegistrarAvaliacao() throws Exception {
-        when(avaliacaoService.registrarAvaliacao(any(AvaliacaoDTO.class)))
-                .thenReturn(null);
+    void registrarAvaliacaoEndpointDeveRetornarCreatedEJson() throws Exception {
+        AvaliacaoDTO resposta = new AvaliacaoDTO(1, "CURSO-1", 8.0);
+        when(avaliacaoService.registrarAvaliacao(any(AvaliacaoDTO.class))).thenReturn(resposta);
 
-        String jsonBody = """
+        String jsonRequest = """
                 {
-                  "alunoId": 123,
-                  "cursoCodigo": "DEVOPS",
-                  "notaFinal": 9.0
+                  "alunoId": 1,
+                  "cursoCodigo": "CURSO-1",
+                  "nota": 8.0
                 }
                 """;
 
         mockMvc.perform(post("/avaliacoes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonBody))
-                .andExpect(status().isCreated());
+                        .content(jsonRequest))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.alunoId").value(1))
+                .andExpect(jsonPath("$.cursoCodigo").value("CURSO-1"))
+                .andExpect(jsonPath("$.nota").value(8.0));
 
         verify(avaliacaoService).registrarAvaliacao(any(AvaliacaoDTO.class));
     }

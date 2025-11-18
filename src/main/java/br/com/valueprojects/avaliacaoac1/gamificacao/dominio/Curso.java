@@ -1,16 +1,21 @@
 package br.com.valueprojects.avaliacaoac1.gamificacao.dominio;
 
-import java.util.Objects;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.EqualsAndHashCode;
 
+@Getter
+@ToString
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Curso {
+
+    @EqualsAndHashCode.Include
     private final String codigo;
-    public Curso(String codigo) { this.codigo = codigo; }
-    public String getCodigo() { return codigo; }
-    @Override public boolean equals(Object o){
-        if(this==o) return true;
-        if(!(o instanceof Curso)) return false;
-        Curso c=(Curso)o;
-        return Objects.equals(codigo, c.codigo);
+
+    public Curso(String codigo) {
+        if (codigo == null || codigo.isBlank()) {
+            throw new IllegalArgumentException("Código do curso não pode ser vazio");
+        }
+        this.codigo = codigo;
     }
-    @Override public int hashCode(){ return Objects.hash(codigo); }
 }
